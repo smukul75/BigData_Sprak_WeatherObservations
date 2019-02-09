@@ -15,6 +15,8 @@ This project is to prepare 2017 weather observation dataset, key points -
 
 
 ### Files
-The data set for this exercise is from National Centers for Environmental Information (NCEI)  at (http://www.ncdc.noaa.gov/data-access/quick-links)
+* Data Set: The data set for this exercise is from National Centers for Environmental Information (NCEI)  at (http://www.ncdc.noaa.gov/data-access/quick-links)
 
-part-00000: WeatherCurated hive table output (part-0000). hive table has around 200 files in hdfs, only one file uploaded to show the end result.
+* part-00000: WeatherCurated hive table output (part-0000). hive table has around 200 files in hdfs, only one file uploaded to show the end result.
+
+* solutionScript_HiveSql: 	step by step solution using SparkSQL HiveContext 
