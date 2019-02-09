@@ -7,7 +7,7 @@ This project is to prepare 2017 weather observation dataset, key points -
 
 •	Un-compress the file into csv file
 
-•	Save the file contents as-is in the Hive table 
+•	Save the file contents as-is in the Hive table
 
 •	Access the data from Spark and then transform it in to a specified format (transpose few measurements)
 
@@ -15,7 +15,5 @@ This project is to prepare 2017 weather observation dataset, key points -
 
 
 ### Files
-
-2017 weather observation [file](ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2017.csv.gz)
 
 part-00000: WeatherCurated hive table output (part-0000). hive table has around 200 files in hdfs, only one file uploaded to show the end result.
