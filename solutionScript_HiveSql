@@ -1,0 +1,100 @@
+
+--------------------------------------------------------
+## step1: Download and Extract File from FTP link
+--------------------------------------------------------
+
+# download data file from noaa website
+wget ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2017.csv.gz -P /home/cloudera/Mukul/Noodle 
+
+# un-compress archive file
+gzip -d /home/cloudera/Mukul/Noodle/2017.csv.gz 
+
+
+------------------------------------------------------------------------------------------------
+## step2: Write a script to store the raw data in Hive as a table named ‘WeatherRaw’. 
+## The raw table should contain all the data & columns available in the source file as-is.
+------------------------------------------------------------------------------------------------
+# connect to hive shell
+
+# create and use new database for noodle project
+create database noodleai;
+use noodleai;
+
+# create hive table in request format
+create table if not exists weatherraw
+(
+station_identifier  string, 
+observation_date    int,
+observation_type    string,
+observation_value   int,
+observation_measure  string ,
+observation_quality  string,
+observation_source   string,
+observation_time     string
+)
+row format delimited 
+fields terminated by ',';
+
+
+# load weather observations data file into hive table
+load data local inpath '/home/cloudera/Mukul/Noodle/2017.csv'
+into table weatherraw;
+
+
+-------------------------------------------------
+------------Spark Transformation---------------
+-------------------------------------------------
+# import required libararies
+import sqlContext.implicits._
+
+# set HiveContext to run SparkSql for the data staored in Hive
+val hc = new org.apache.spark.sql.hive.HiveContext(sc)
+
+# use noodle database
+hc.sql("use noodleai")
+
+
+#SQL to transform the data
+#case stattemnet is used for each required measurement to convert into a column
+#divided by 10 to show number in whole unit 
+
+val transform = hc.sql("select  station_identifier, observation_date, 
+sum(case  when observation_type = 'PRCP' then observation_value else 0 end)/10 Precipitation, 
+sum(case  when observation_type = 'TMAX' then observation_value else 0 end)/10 MaxTemparature, 
+sum(case  when observation_type = 'TMIN' then observation_value else 0 end)/10 MinTemparature, 
+sum(case  when observation_type = 'SNOW' then observation_value else 0 end) Snowfall, 
+sum(case  when observation_type = 'SNWD' then observation_value else 0 end) SnowDepth, 
+sum(case  when observation_type = 'EVAP' then observation_value else 0 end)/10 Evaporation, 
+sum(case  when observation_type = 'WESD' then observation_value else 0 end)/10 WaterEquivalentSnowDepth, 
+sum(case  when observation_type = 'WESF' then observation_value else 0 end)/10 WaterEquivalentSnowFall, 
+sum(case  when observation_type = 'PSUN' then observation_value else 0 end) Sunshine 
+from weatherraw 
+where observation_type in ('PRCP', 'TMAX', 'TMIN', 'SNOW', 'SNWD', 'EVAP', 'WESD ', 'WESF', 'PSUN') 
+group by station_identifier, observation_date");
+
+# Print schema to check all required columns created properly
+transform.printSchema()
+root
+ |-- station_identifier: string (nullable = true)
+ |-- observation_date: integer (nullable = true)
+ |-- Precipitation: long (nullable = true)
+ |-- MaxTemparature: long (nullable = true)
+ |-- MinTemparature: long (nullable = true)
+ |-- Snowfall: long (nullable = true)
+ |-- SnowDepth: long (nullable = true)
+ |-- Evaporation: long (nullable = true)
+ |-- WaterEquivalentSnowDepth: long (nullable = true)
+ |-- WaterEquivalentSnowFall: long (nullable = true)
+ |-- Sunshine: long (nullable = true)
+
+# Convert transform result into a DataFrame
+# Rgister DataFrame as a Temporary Table in the SQLContext 
+transform.toDF().registerTempTable("temp_weathercurated")
+
+# Create table in Hive using above temp table
+hc.sql("create table weathercurated as select * from temp_weathercurated")
+
+# verify table created in Hive by checking first 20 rows
+hc.sql("select * from weathercurated limit 20").show()
+
+
