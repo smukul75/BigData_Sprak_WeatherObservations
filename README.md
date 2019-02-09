@@ -1,6 +1,6 @@
-# BigData_Sprak_WeatherObservations
+## BigData_Sprak_WeatherObservations
 
-# Summary
+### Summary
 This project is to prepare 2017 weather observation dataset, key points - 
 
 •	Download the data set from a compressed file at specified ftp link to local system
@@ -14,8 +14,8 @@ This project is to prepare 2017 weather observation dataset, key points -
 •	Store the transformed data back into Hive (new table)
 
 
-# Files
+### Files
 
-2017 weather observation file ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2017.csv.gz
+[2017 weather observation file] (ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2017.csv.gz)
 
 part-00000: WeatherCurated hive table output (part-0000). hive table has around 200 files in hdfs, only one file uploaded to show the end result.
