@@ -19,4 +19,7 @@ This project is to prepare 2017 weather observation dataset, key points -
 
 * part-00000: WeatherCurated hive table output (part-0000). hive table has around 200 files in hdfs, only one file uploaded to show the end result.
 
-* solutionScript_HiveSql: 	step by step solution using SparkSQL HiveContext 
+* solutionScript_HiveSql: 	step by step solution using SparkSQL HiveContext
+
+* solutionScript-Python.py: 	python solution script using PySpark session 
+
